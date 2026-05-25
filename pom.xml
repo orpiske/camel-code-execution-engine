@@ -54,6 +54,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <scm>
+        <connection>scm:git:https://github.com/wanaku-ai/camel-code-execution-engine.git</connection>
+        <developerConnection>scm:git:git@github.com:wanaku-ai/camel-code-execution-engine.git</developerConnection>
+        <url>https://github.com/wanaku-ai/camel-code-execution-engine</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>ai.wanaku.sdk</groupId>
