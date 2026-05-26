@@ -66,8 +66,8 @@ The CCE downloads a code generation package (tar.bz2 archive) from the Wanaku da
 
 **Acceptance Scenarios**:
 
-1. **Given** a datastore URI `datastore://code-gen-package.tar.bz`, **When** the service completes registration, **Then** the archive is downloaded and extracted to the data directory.
-2. **Given** the datastore is unavailable, **When** download is attempted, **Then** the system logs an error and continues without code generation tools.
+1. **Given** a datastore URI `datastore-archive://code-gen-package.tar.bz2`, **When** the service completes registration, **Then** the archive is downloaded and extracted to the data directory.
+2. **Given** the datastore is unavailable, **When** download is attempted, **Then** the system logs an error and skips tool registration (the service starts normally but without code generation tools available).
 3. **Given** the archive is successfully extracted, **When** the tools are registered, **Then** they can access the properties file, kamelets directory, and templates directory.
 
 ---

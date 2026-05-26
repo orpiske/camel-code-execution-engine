@@ -11,7 +11,7 @@ These tools are exposed via gRPC through the existing ToolInvoker service. Tools
 
 ### searchServicesTool
 
-**URI**: `codegen://searchServicesTool`
+**URI**: `searchServicesTool` (or `<namespace>/searchServicesTool` if a namespace is configured)
 
 **Description**: (Configurable) Default: "Searches for services to perform the tasks"
 
@@ -50,7 +50,7 @@ kamelet:service3
 
 ### readKamelet
 
-**URI**: `codegen://readKamelet`
+**URI**: `readKamelet` (or `<namespace>/readKamelet` if a namespace is configured)
 
 **Description**: "Reads the content of a Kamelet by name"
 
@@ -108,12 +108,13 @@ spec:
 | Kamelet not found | "Kamelet '{name}' not found" |
 | Invalid Kamelet name | "Invalid Kamelet name: {name}" |
 | Kamelets directory missing | "Code generation package not loaded" |
+| Kamelet file contains malformed YAML | "Invalid Kamelet file: {name}" |
 
 ---
 
 ### generateOrchestrationCode
 
-**URI**: `codegen://generateOrchestrationCode`
+**URI**: `generateOrchestrationCode` (or `<namespace>/generateOrchestrationCode` if a namespace is configured)
 
 **Description**: "Returns the orchestration template for code generation"
 
@@ -138,21 +139,20 @@ spec:
 
 ## Tool Registration Schema
 
-Tools are registered with Wanaku using the following structure:
+Tools are registered with Wanaku using the Wanaku SDK's `ToolReference` format. Each tool includes:
 
-```json
-{
-  "name": "searchServicesTool",
-  "description": "Searches for services to perform the tasks",
-  "uri": "codegen://searchServicesTool",
-  "type": "codegen",
-  "namespace": "ai.wanaku.codegen",
-  "inputSchema": {
-    "type": "object",
-    "properties": {},
-    "required": []
-  }
-}
+- **name**: The tool identifier (e.g., "searchServicesTool")
+- **description**: Human-readable description of what the tool does
+- **inputSchema**: JSON Schema defining the tool's parameters
+- **namespace** (optional): Grouping namespace for the tool
+
+Example registration for `searchServicesTool`:
+
+```
+name: searchServicesTool
+description: Searches for services to perform the tasks
+namespace: ai.wanaku.codegen (if namespace is set in config.properties)
+inputSchema: {} (no parameters required)
 ```
 
 ## gRPC Message Reference
@@ -182,16 +182,16 @@ message ToolInvokeReply {
 ```
 Agent
   │
-  ▼ ToolInvokeRequest(uri="codegen://searchServicesTool")
+  ▼ ToolInvokeRequest(uri="searchServicesTool")
   │
 Wanaku Router
   │
   ▼ Route to CCE based on tool registration
   │
-CCE (CodeGenToolService)
+CCE (CodeGenToolInvokerService)
   │
-  ├── Parse URI to extract tool name
-  ├── Dispatch to appropriate handler
+  ├── Parse URI to identify tool
+  ├── Dispatch to appropriate handler (SearchServicesTool, ReadKameletTool, or GenerateOrchestrationTool)
   ├── Read from extracted package resources
-  └── Return ToolInvokeReply
+  └── Return ToolInvokeReply(content=result)
 ```

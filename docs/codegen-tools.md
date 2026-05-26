@@ -94,21 +94,25 @@ The `templates/orchestration.txt` file contains the template returned by the `ge
 
 ## Tool Registration
 
-Tools are registered with Wanaku using the service name as the URI scheme:
+Each tool is registered with Wanaku and assigned a unique URI. The URI follows the pattern:
 
 ```text
-<service-name>://searchServicesTool
-<service-name>://readKamelet
-<service-name>://generateOrchestrationCode
+<namespace>/<tool-name>
 ```
 
-For example, with `--name code-execution-engine`:
+Where:
+- `<namespace>` is the optional namespace set in `config.properties` (or empty if not set)
+- `<tool-name>` is one of: `searchServicesTool`, `readKamelet`, `generateOrchestrationCode`
+
+For example, with `namespace=ai.wanaku.codegen` in config.properties:
 
 ```text
-code-execution-engine://searchServicesTool
-code-execution-engine://readKamelet
-code-execution-engine://generateOrchestrationCode
+ai.wanaku.codegen/searchServicesTool
+ai.wanaku.codegen/readKamelet
+ai.wanaku.codegen/generateOrchestrationCode
 ```
+
+Without a namespace, tools are registered at the root level.
 
 ## Tool Details
 
@@ -188,8 +192,23 @@ java -jar camel-code-execution-engine-app.jar \
 To create a tar.bz2 archive for upload to the data store:
 
 ```bash
-# From the parent directory of your package
-tar -cjf codegen-package.tar.bz2 my-package/
+# Navigate to your package directory
+cd my-package
+
+# Create the archive (note: archive root contains the files directly, not wrapped in a directory)
+tar -cjf ../codegen-package.tar.bz2 config.properties kamelets/ templates/
+
+# Verify the archive structure
+tar -tjf ../codegen-package.tar.bz2
+```
+
+The archive should contain the files directly at the root level:
+```
+config.properties
+kamelets/
+kamelets/http-source.kamelet.yaml
+templates/
+templates/orchestration.txt
 ```
 
 Then upload `codegen-package.tar.bz2` to the Wanaku data store.
