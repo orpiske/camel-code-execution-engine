@@ -34,7 +34,7 @@ The Camel Code Execution Engine (CCE) serves two primary functions:
 
 - **Dynamic YAML Route Execution**: Execute Camel routes defined in YAML at runtime
 - **Automatic Dependency Resolution**: Downloads Maven dependencies on-the-fly
-- **Code Generation Tools**: Three built-in tools for AI-assisted integration development
+- **Code Generation Tools**: Three MCP-compliant tools for AI-assisted integration development
   - `searchServicesTool` - Lists available Kamelets/integration services
   - `readKamelet` - Returns complete YAML definition of a Kamelet
   - `generateOrchestrationCode` - Returns templates for assembling routes
@@ -42,9 +42,6 @@ The Camel Code Execution Engine (CCE) serves two primary functions:
 - **OAuth2/OIDC Authentication**: Secure service registration
 - **Git Initialization**: Optional repository cloning at startup
 - **Multi-platform Deployment**: Local, Docker, Kubernetes/OpenShift
-
-> [!NOTE]
-> The MCP tools are not yet functional. The agent must provide the data and the execution workflow.
 
 ## Quick Start
 
@@ -95,7 +92,7 @@ Once started, the service registers with the Wanaku router and exposes its tools
 | `--wait-seconds` | 5 | Retry wait time |
 | `--data-dir` | /tmp/cee | Workspace and data directory |
 | `--init-from` | - | Git repository URL to clone at startup |
-| `--repositories` | - | Maven repositories for dependency resolution |
+| `--repositories` | - | Comma-separated list of Maven repository URLs for dependency resolution |
 
 ### Code Generation Package Structure
 
@@ -122,9 +119,10 @@ namespace=optional.namespace
 
 | Scheme | Description |
 |--------|-------------|
-| `datastore://` | Wanaku DataStore access |
-| `datastore-archive://` | Wanaku DataStore with tar.bz2 extraction |
-| `file://` | Local filesystem (absolute paths) |
+| `datastore-archive://` | Wanaku DataStore with tar.bz2 extraction (for code generation packages) |
+| `file://` | Local filesystem path (absolute paths only) |
+
+The `--codegen-package` option accepts either a `datastore-archive://` URI or a local filesystem path.
 
 ## Deployment
 

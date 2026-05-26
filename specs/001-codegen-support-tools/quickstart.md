@@ -58,13 +58,13 @@ EOF
 
 ```bash
 cd code-gen-package
-tar -cvjf ../code-gen-package.tar.bz ..
+tar -cjf ../code-gen-package.tar.bz2 config.properties kamelets/ templates/
 cd ..
 ```
 
 ### 3. Upload to Data Store
 
-Upload `code-gen-package.tar.bz` to Wanaku data store with name `code-gen-package.tar.bz`.
+Upload `code-gen-package.tar.bz2` to Wanaku data store.
 
 ## Running CCE with Code Generation Tools
 
@@ -76,7 +76,7 @@ java -jar camel-code-execution-engine-app.jar \
   --client-id your-client-id \
   --client-secret your-client-secret \
   --data-dir /tmp/cce \
-  --codegen-package datastore://code-gen-package.tar.bz
+  --codegen-package datastore-archive://code-gen-package.tar.bz2
 ```
 
 ### Docker
@@ -86,43 +86,22 @@ docker run -it \
   -e REGISTRATION_URL=http://wanaku:8080 \
   -e CLIENT_ID=your-client-id \
   -e CLIENT_SECRET=your-client-secret \
-  -e CODEGEN_PACKAGE=datastore://code-gen-package.tar.bz \
-  -v /tmp/cce:/data \
+  -e CODEGEN_PACKAGE=datastore-archive://code-gen-package.tar.bz2 \
+  -v /tmp/cee:/data \
   camel-code-execution-engine:latest
 ```
 
 ## Verifying Tool Registration
 
-After CCE starts, verify tools are registered:
+After CCE starts, verify tools are registered by checking the service logs. You should see messages indicating successful tool registration:
 
-```bash
-# List registered tools (via Wanaku API)
-curl http://localhost:8080/api/v1/tools | jq '.[] | select(.type == "codegen")'
+```
+INFO  Tool registered: searchServicesTool
+INFO  Tool registered: readKamelet  
+INFO  Tool registered: generateOrchestrationCode
 ```
 
-Expected output:
-```json
-[
-  {
-    "name": "searchServicesTool",
-    "description": "Searches for available services to build integrations",
-    "uri": "codegen://searchServicesTool",
-    "type": "codegen"
-  },
-  {
-    "name": "readKamelet",
-    "description": "Reads the content of a Kamelet by name",
-    "uri": "codegen://readKamelet",
-    "type": "codegen"
-  },
-  {
-    "name": "generateOrchestrationCode",
-    "description": "Returns the orchestration template for code generation",
-    "uri": "codegen://generateOrchestrationCode",
-    "type": "codegen"
-  }
-]
-```
+You can also query the Wanaku discovery service to list available tools (exact endpoint depends on your Wanaku configuration).
 
 ## Using the Tools
 
@@ -130,7 +109,7 @@ Expected output:
 
 ```bash
 grpcurl -plaintext -d '{
-  "uri": "codegen://searchServicesTool"
+  "uri": "searchServicesTool"
 }' localhost:9190 wanaku.capabilities.ToolInvoker/InvokeTool
 ```
 
@@ -138,7 +117,7 @@ grpcurl -plaintext -d '{
 
 ```bash
 grpcurl -plaintext -d '{
-  "uri": "codegen://readKamelet",
+  "uri": "readKamelet",
   "arguments": {"name": "http-source"}
 }' localhost:9190 wanaku.capabilities.ToolInvoker/InvokeTool
 ```
@@ -147,9 +126,11 @@ grpcurl -plaintext -d '{
 
 ```bash
 grpcurl -plaintext -d '{
-  "uri": "codegen://generateOrchestrationCode"
+  "uri": "generateOrchestrationCode"
 }' localhost:9190 wanaku.capabilities.ToolInvoker/InvokeTool
 ```
+
+**Note**: If you configured a namespace in `config.properties`, prefix the tool names with the namespace (e.g., `ai.wanaku.codegen/searchServicesTool`).
 
 ## Troubleshooting
 
