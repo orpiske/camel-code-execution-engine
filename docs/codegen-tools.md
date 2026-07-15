@@ -101,6 +101,7 @@ Each tool is registered with Wanaku and assigned a unique URI. The URI follows t
 ```
 
 Where:
+
 - `<namespace>` is the optional namespace set in `config.properties` (or empty if not set)
 - `<tool-name>` is one of: `searchServicesTool`, `readKamelet`, `generateOrchestrationCode`
 
@@ -203,7 +204,8 @@ tar -tjf ../codegen-package.tar.bz2
 ```
 
 The archive should contain the files directly at the root level:
-```
+
+```text
 config.properties
 kamelets/
 kamelets/http-source.kamelet.yaml
