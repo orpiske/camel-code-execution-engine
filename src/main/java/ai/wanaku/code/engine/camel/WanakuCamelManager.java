@@ -5,16 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import ai.wanaku.capabilities.sdk.maven.GAV;
 import ai.wanaku.capabilities.sdk.maven.WanakuMavenDownloader;
 import ai.wanaku.capabilities.sdk.runtime.camel.downloader.ResourceType;
