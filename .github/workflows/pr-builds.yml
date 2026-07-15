@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - "main"
+      - '[0-9]*.[0-9]*.x'
     paths-ignore:
       - .github/**
       - docs/**
@@ -31,9 +32,19 @@ jobs:
       fail-fast: true
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Determine SDK ref
+      id: sdk-ref
+      shell: bash
+      run: |
+        BRANCH="${{ github.base_ref }}"
+        if git ls-remote --heads https://github.com/wanaku-ai/wanaku-capabilities-java-sdk.git "$BRANCH" | grep -q .; then
+          echo "ref=$BRANCH" >> $GITHUB_OUTPUT
+        else
+          echo "ref=main" >> $GITHUB_OUTPUT
+        fi
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
     - name: Set up JDK 21
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
       with:
         java-version: '21'
         distribution: 'temurin'
@@ -41,9 +52,20 @@ jobs:
     - name: Checkout and build dependencies
       run: |
         cd ..
-        git clone https://github.com/wanaku-ai/wanaku-capabilities-java-sdk.git
+        git clone -b ${{ steps.sdk-ref.outputs.ref }} https://github.com/wanaku-ai/wanaku-capabilities-java-sdk.git
         cd wanaku-capabilities-java-sdk
         mvn -DskipTests -B install --file pom.xml
         cd ${{ github.workspace }}
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B install --file pom.xml
+    - name: Generate Test Reports
+      if: always()
+      run: mvn -B --no-transfer-progress surefire-report:report-only surefire-report:failsafe-report-only -Daggregate=true
+    - name: Upload Test Reports
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: test-reports-${{ matrix.os }}
+        path: 'target/reports/'
+        retention-days: 14
+        if-no-files-found: ignore
