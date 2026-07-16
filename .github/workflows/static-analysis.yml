@@ -51,7 +51,7 @@ jobs:
       with:
         python-version: '3.x'
     - name: Install Python dependencies
-      run: python -m pip install --quiet defusedxml==0.7.1
+      run: python3 -m pip install --quiet defusedxml==0.7.1
     - name: Save PR number
       run: echo "${{ github.event.pull_request.number }}" > pr-number.txt
     - name: Upload PR number
