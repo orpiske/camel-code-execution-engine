@@ -24,6 +24,8 @@
         <junit.version>6.1.0</junit.version>
         <jgit.version>7.6.0.202603022253-r</jgit.version>
         <palantir-format-version.version>2.71.0</palantir-format-version.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -223,6 +225,43 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <configuration>
+                        <targetJdk>21</targetJdk>
+                        <linkXRef>false</linkXRef>
+                        <excludeRoots>
+                            <excludeRoot>${project.build.directory}/generated-sources</excludeRoot>
+                            <excludeRoot>${project.build.directory}/generated-test-sources</excludeRoot>
+                        </excludeRoots>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                    <configuration>
+                        <effort>Default</effort>
+                        <threshold>High</threshold>
+                        <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
                     <version>${spotless-maven-plugin.version}</version>
@@ -285,4 +324,22 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>static-analysis</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
