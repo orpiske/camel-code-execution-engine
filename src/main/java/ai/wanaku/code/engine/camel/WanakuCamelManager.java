@@ -10,16 +10,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ai.wanaku.capabilities.sdk.maven.GAV;
 import ai.wanaku.capabilities.sdk.maven.WanakuMavenDownloader;
 import ai.wanaku.capabilities.sdk.runtime.camel.downloader.ResourceType;
 import ai.wanaku.capabilities.sdk.runtime.camel.util.WanakuRoutesLoader;
 
 public class WanakuCamelManager {
-    private static final Logger LOG = LoggerFactory.getLogger(WanakuCamelManager.class);
-
     private final CamelContext context;
     private final String routesPath;
     private List<GAV> gavs = new ArrayList<>();

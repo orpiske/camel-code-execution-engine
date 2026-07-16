@@ -216,7 +216,7 @@ public class CamelEngineMain implements Callable<Integer> {
             final ServerBuilder<?> serverBuilder =
                     Grpc.newServerBuilderForPort(grpcPort, InsecureServerCredentials.create());
             final Server server = serverBuilder
-                    .addService(new CodeExecutorService(servicesHttpClient, dataDirPath, repositories))
+                    .addService(new CodeExecutorService(dataDirPath, repositories))
                     .addService(new CodeGenToolInvokerService(codeGenToolService))
                     .addService(new ProvisionBase(name))
                     .build();

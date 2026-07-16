@@ -9,7 +9,6 @@ import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.grpc.stub.StreamObserver;
-import ai.wanaku.capabilities.sdk.services.ServicesHttpClient;
 import ai.wanaku.code.engine.camel.WanakuCamelManager;
 import ai.wanaku.core.exchange.v1.CodeExecutionReply;
 import ai.wanaku.core.exchange.v1.CodeExecutionRequest;
@@ -21,12 +20,10 @@ import com.google.protobuf.Timestamp;
 public class CodeExecutorService extends CodeExecutorGrpc.CodeExecutorImplBase {
     private static final Logger LOG = LoggerFactory.getLogger(CodeExecutorService.class);
 
-    private final ServicesHttpClient servicesHttpClient;
     private final Path dataDir;
     private final String defaultRepositories;
 
-    public CodeExecutorService(ServicesHttpClient servicesHttpClient, Path dataDir, String defaultRepositories) {
-        this.servicesHttpClient = servicesHttpClient;
+    public CodeExecutorService(Path dataDir, String defaultRepositories) {
         this.dataDir = dataDir;
         this.defaultRepositories = defaultRepositories;
     }
